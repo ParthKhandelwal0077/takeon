@@ -1,16 +1,20 @@
 import { redirect } from 'next/navigation'
-
+import GameCreation from '@/app/game/GameCreation'
+import UserDataProvider from '@/app/private/UserDataProvider'
 import { createClient } from '@/utils/supabase/server'
 
 export default async function PrivatePage() {
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
-    console.log(error)
+  
+  if (!data.user || error) {
     redirect('/authentication')
   }
-  console.log(data)
-  return <p>Hello {data.user.email}</p>
-  
+
+  return (
+    <UserDataProvider>
+      <GameCreation />
+    </UserDataProvider>
+  )
 }
